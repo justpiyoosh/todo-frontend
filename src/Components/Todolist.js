@@ -46,7 +46,6 @@ class Todolist extends Component {
             console.error('There was an error!', error);
         });
 
-        // this.fetchData();
     }
 
 
@@ -80,7 +79,7 @@ class Todolist extends Component {
                         
 
                         <h2 className='Todo_title' onClick={() => {
-                            this.props.history.push('/edit')
+                            this.props.history.push(`/todo/${ele.id}`)
                         }}>{ele.title}
                         </h2>
 
@@ -89,6 +88,8 @@ class Todolist extends Component {
                         </button>
                     </div>
                 })}
+
+                <button onClick={()=> this.props.history.push('./add')}>Add</button>
             </div>
     }
 }
