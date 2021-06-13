@@ -2,24 +2,24 @@ import { Component } from "react";
 import {withRouter} from 'react-router-dom'
 
 
-class Add extends Component{
+class AddTodo extends Component{
 
     constructor(props){
         super(props)
         this.handleMember = this.handleMember.bind(this)
     }
 
-    handleMember(){
+    async handleMember(){
 
         const title = document.getElementById('title').value
         const des = document.getElementById('description').value
 
-        await fetch('https://todobackend4.herokuapp.com/todo/todos_list').then((res) => {
+        await fetch(`https://todobackend4.herokuapp.com/todo/create?isComplete=false&description=${des}&title=${title}`).then((res) => {
             console.log(res)
         })
             .catch((e) => { console.warn(e.message)})
 
-       this.props.history.push('./');
+       this.props.history.push('/');
     }
 
     render(){
@@ -36,4 +36,4 @@ class Add extends Component{
     }
 }
 
-export default withRouter(Add)
+export default withRouter(AddTodo)

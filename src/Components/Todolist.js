@@ -29,13 +29,13 @@ class Todolist extends Component {
             .catch((e) => { console.warn(e.message)})
     }
 
-    async handleComplete(e){
+    async handleComplete(e,ele){
         let Id = e.target.id.split('-')[0]
 
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isComplete: `${e.target.checked}` , description : `helloe there` ,title : `afffjal`})
+            body: JSON.stringify({ isComplete: `${e.target.checked}` , description : `${ele.description}` ,title : `${ele.title}`})
         };
         fetch(`https://todobackend4.herokuapp.com/todo/edit/${Id}`, requestOptions)
         .then(async response => {
@@ -73,8 +73,8 @@ class Todolist extends Component {
                     return <div key ={ele.id}>
 
                         {ele.isComplete === 'true' ? 
-                            <input id={`${ele.id}-input`} type='checkbox' defaultChecked={true} onClick={this.handleComplete} />:
-                            <input id={`${ele.id}-input`} type='checkbox' onClick={this.handleComplete} />
+                            <input id={`${ele.id}-input`} type='checkbox' defaultChecked={true} onClick={(e) =>this.handleComplete(e,ele)} />:
+                            <input id={`${ele.id}-input`} type='checkbox' onClick={(e)=>this.handleComplete(e,ele)} />
                         }
                         
 
@@ -82,6 +82,7 @@ class Todolist extends Component {
                             this.props.history.push(`/todo/${ele.id}`)
                         }}>{ele.title}
                         </h2>
+                        <button onClick={()=> this.props.history.push(`/view/${ele.id}`)}>view</button>
 
                         <button className='Todo_delete' id={ele.id} onClick={this.handleDelete}>
                             delete
@@ -89,7 +90,7 @@ class Todolist extends Component {
                     </div>
                 })}
 
-                <button onClick={()=> this.props.history.push('./add')}>Add</button>
+                <button onClick={()=> this.props.history.push('/add')}>Add</button>
             </div>
     }
 }
