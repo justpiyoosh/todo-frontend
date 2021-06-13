@@ -10,50 +10,85 @@ class Todolist extends Component {
             response: [],
             isLoading: true
         }
-
+        this.handleDelete = this.handleDelete.bind(this)
+        this.fatchData = this.fetchData.bind(this);
+        this.handleComplete = this.handleComplete.bind(this);
     }
 
-    componentDidMount = async () => {
+    async fetchData(){
         await fetch('https://todobackend4.herokuapp.com/todo/todos_list').then((res) => {
-
-            this.setState({
-                isLoading: false
-            })
+            this.setState({ isLoading: false})
             return res.json()
-
         })
             .then((data) => {
-                this.setState({
-                    response: data
-                })
+                
+                const sortedArray = [...data].sort((a,b)=>{return a.id - b.id})
+
+                this.setState({  response: sortedArray })
             })
-            .catch((e) => {
-                console.warn(e.message)
-            })
+            .catch((e) => { console.warn(e.message)})
+    }
+
+    async handleComplete(e){
+        let Id = e.target.id.split('-')[0]
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isComplete: `${e.target.checked}` , description : `helloe there` ,title : `afffjal`})
+        };
+        fetch(`https://todobackend4.herokuapp.com/todo/edit/${Id}`, requestOptions)
+        .then(async response => {
+            return response.json()
+        })
+        .then((msg)=> console.log(msg))
+        .catch(error => {
+            console.error('There was an error!', error);
+        });
+
+        // this.fetchData();
+    }
+
+
+    async handleDelete(e){
+        await fetch(`https://todobackend4.herokuapp.com/todo/delete/${e.target.id}`, { method: 'DELETE' })
+        .then(() => console.log('deleted'));
+
+        this.fetchData();
+    }
+
+
+    componentDidMount = () => {
+        this.fetchData();
     }
 
     render() {
-        const data = ["title1", "title2", "title3"];
         if (this.state.isLoading)
             return <div className='App'>Loading....</div>
 
         else
-            return <div >
+            return <div className='Todo_block'>
                 <h1>Todolist</h1>
                 <hr />
                 {this.state.response.map((ele) => {
-                    return <div
-                        key ={ele.id}
-                        onClick={() => {
-                            this.props.history.push('/edit')
-                        }}>
-                        <input type='checkbox'/>
-                        <h2>{ele.title}</h2>
-                        <button>delete</button>
+                    return <div key ={ele.id}>
+
+                        {ele.isComplete === 'true' ? 
+                            <input id={`${ele.id}-input`} type='checkbox' defaultChecked={true} onClick={this.handleComplete} />:
+                            <input id={`${ele.id}-input`} type='checkbox' onClick={this.handleComplete} />
+                        }
                         
+
+                        <h2 className='Todo_title' onClick={() => {
+                            this.props.history.push('/edit')
+                        }}>{ele.title}
+                        </h2>
+
+                        <button className='Todo_delete' id={ele.id} onClick={this.handleDelete}>
+                            delete
+                        </button>
                     </div>
                 })}
-
             </div>
     }
 }
